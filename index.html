@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snackworks Creator Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --paper: #fafaf7;
+    --paper-warm: #f0ede5;
+    --line: #e5e2da;
+    --grape: #5b1d96;
+    --candy: #e63946;
+    --sour: #f5c518;
+    --lime: #6ba84f;
+    --ash: #6b6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-size: 15px;
+  }
+
+  /* ============ MASTHEAD ============ */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .masthead .left, .masthead .right { display: flex; gap: 20px; }
+  .masthead .center { color: rgba(250,250,247,0.7); }
+  .dot { width: 5px; height: 5px; background: var(--candy); border-radius: 50%; display: inline-block; margin-right: 8px; }
+
+  /* ============ HERO ============ */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 90px 32px 80px;
+    position: relative;
+  }
+  .hero-grid {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.5fr 0.9fr 0.5fr;
+    gap: 48px; align-items: end;
+  }
+  .hero-art {
+    position: relative;
+    width: 100%; height: 320px;
+    align-self: center;
+    cursor: pointer;
+  }
+  .hero-art svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* Each snack gets its own float animation + transition group */
+  .snack {
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: grab;
+  }
+  .snack:active { cursor: grabbing; }
+  .snack:hover { transform: scale(1.15); }
+
+  @keyframes drift-1 {
+    0%, 100% { transform: translate(0, 0) rotate(-4deg); }
+    25% { transform: translate(2px, -8px) rotate(-7deg); }
+    50% { transform: translate(0, -12px) rotate(-3deg); }
+    75% { transform: translate(-3px, -6px) rotate(-6deg); }
+  }
+  @keyframes drift-2 {
+    0%, 100% { transform: translate(0, 0) rotate(6deg); }
+    33% { transform: translate(-3px, -10px) rotate(10deg); }
+    66% { transform: translate(2px, -5px) rotate(4deg); }
+  }
+  @keyframes drift-3 {
+    0%, 100% { transform: translate(0, 0) rotate(-12deg); }
+    40% { transform: translate(4px, -8px) rotate(-7deg); }
+    70% { transform: translate(-2px, -14px) rotate(-15deg); }
+  }
+  .drift-1 { animation: drift-1 5s ease-in-out infinite; }
+  .drift-2 { animation: drift-2 6s ease-in-out infinite 0.3s; }
+  .drift-3 { animation: drift-3 5.5s ease-in-out infinite 0.6s; }
+
+  /* Sparkle twinkle */
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .twinkle { animation: twinkle 2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .twinkle-2 { animation-delay: 0.5s; }
+  .twinkle-3 { animation-delay: 1s; }
+  .twinkle-4 { animation-delay: 1.5s; }
+
+  /* Click bounce */
+  @keyframes bounce-pop {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3) rotate(15deg); }
+    60% { transform: scale(0.95) rotate(-5deg); }
+    100% { transform: scale(1); }
+  }
+  .snack.popping { animation: bounce-pop 0.6s ease-out; }
+  .hero-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; letter-spacing: 0.01em;
+    color: rgba(250,250,247,0.7);
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: '— '; opacity: 0.6;
+  }
+  .hero h1 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin-bottom: 24px;
+  }
+  .hero h1 .accent {
+    color: var(--sour);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    max-width: 460px;
+    color: rgba(250,250,247,0.7);
+    line-height: 1.55;
+  }
+  .hero-meta {
+    text-align: right;
+    border-left: 1px solid rgba(250,250,247,0.15);
+    padding-left: 32px;
+  }
+  .hero-meta-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.01em;
+    color: rgba(250,250,247,0.55);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .hero-meta-num {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: 4.5rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--paper);
+  }
+  .hero-meta-desc {
+    font-size: 0.88rem;
+    color: rgba(250,250,247,0.6);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* ============ ALERT BAR ============ */
+  .alert-bar {
+    background: var(--candy);
+    color: var(--paper);
+    padding: 18px 32px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.98rem;
+    letter-spacing: -0.005em;
+  }
+  .alert-bar strong {
+    background: rgba(0,0,0,0.25);
+    padding: 3px 10px; border-radius: 4px;
+    font-family: 'Inter', sans-serif; font-size: 0.88rem;
+    margin: 0 4px; font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* ============ MAIN CONTAINER ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 32px 100px;
+  }
+
+  /* ============ INTRO ============ */
+  .intro-block {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 48px;
+    margin-bottom: 80px;
+    align-items: start;
+    padding-bottom: 64px;
+    border-bottom: 1px solid var(--line);
+  }
+  .intro-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ash);
+    padding-top: 6px;
+    font-weight: 500;
+    font-style: italic;
+  }
+  .intro-prose {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .intro-prose p + p { margin-top: 14px; }
+  .intro-prose strong { font-weight: 700; }
+
+  /* ============ NAV ============ */
+  .nav-strip {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 8px;
+    margin-bottom: 64px;
+    display: flex; gap: 4px; flex-wrap: wrap;
+    align-items: center;
+    position: sticky; top: 16px; z-index: 50;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .nav-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ash);
+    padding: 0 14px 0 18px;
+    font-weight: 500;
+  }
+  .nav-pill {
+    padding: 8px 16px; border-radius: 100px;
+    font-size: 0.85rem; font-weight: 500;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    background: transparent;
+  }
+  .nav-pill:hover { background: var(--ink); color: var(--paper); }
+
+  /* ============ SECTION HEAD ============ */
+  .section-head {
+    margin-bottom: 40px;
+    padding-top: 16px;
+  }
+  .section-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    color: var(--candy);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .section-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+  .section-desc {
+    font-size: 1rem;
+    color: var(--ash);
+    max-width: 580px;
+    line-height: 1.55;
+  }
+
+  /* ============ CHECKLIST ============ */
+  .checklist {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 16px;
+    padding: 40px 44px;
+    margin-bottom: 96px;
+  }
+  .checklist-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 28px; padding-bottom: 20px;
+    border-bottom: 1px solid rgba(250,250,247,0.12);
+  }
+  .checklist-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700; font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .checklist-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: rgba(250,250,247,0.55);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 36px;
+  }
+  .checklist-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 6px 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: rgba(250,250,247,0.92);
+  }
+  .checklist-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--sour);
+    padding-top: 3px;
+    min-width: 22px;
+    font-weight: 700;
+  }
+  .checklist-item strong { font-weight: 600; color: var(--paper); }
+
+  /* ============ RULE CARDS ============ */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 96px;
+  }
+  .rule {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .rule:hover { border-color: var(--ink); }
+  .rule[open] { border-color: var(--ink); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+
+  .rule-summary {
+    list-style: none; cursor: pointer;
+    padding: 22px 28px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .rule-summary::-webkit-details-marker { display: none; }
+
+  .rule-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--ash);
+    min-width: 28px;
+  }
+
+  .rule-text { flex: 1; display: flex; align-items: center; gap: 14px; }
+  .rule-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    padding: 3px 9px; border-radius: 100px;
+    font-weight: 600;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+  }
+  .rule.crit .rule-tag { background: rgba(230,57,70,0.1); color: var(--candy); }
+  .rule.med .rule-tag { background: rgba(91,29,150,0.1); color: var(--grape); }
+  .rule.low .rule-tag { background: rgba(245,197,24,0.18); color: #876700; }
+
+  .rule-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    letter-spacing: -0.012em;
+  }
+  .rule-toggle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.4rem;
+    color: var(--ash);
+    transition: transform 0.2s;
+    font-weight: 300;
+    line-height: 1;
+  }
+  .rule[open] .rule-toggle { transform: rotate(45deg); }
+
+  .rule-body {
+    padding: 0 28px 26px 78px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .rule-body p + p { margin-top: 8px; }
+  .rule-body strong { color: var(--ink); font-weight: 600; }
+
+  .doDont {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 16px;
+  }
+  .doDont > div {
+    padding: 14px 16px; border-radius: 8px;
+    font-size: 0.9rem; line-height: 1.5;
+    color: var(--ink);
+  }
+  .doDont .yes {
+    background: rgba(107,168,79,0.08);
+    border: 1px solid rgba(107,168,79,0.25);
+  }
+  .doDont .no {
+    background: rgba(230,57,70,0.06);
+    border: 1px solid rgba(230,57,70,0.2);
+  }
+  .doDont .yes::before, .doDont .no::before {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .doDont .yes::before { content: 'Do this'; color: #4d7a2a; }
+  .doDont .no::before { content: 'Don\'t'; color: var(--candy); }
+
+  .rule-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--paper-warm);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--ash);
+  }
+
+  /* ============ PRODUCT CARDS ============ */
+  .product {
+    margin-bottom: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    scroll-margin-top: 100px;
+  }
+  .product-banner {
+    padding: 36px 44px;
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .product.spk-og .product-banner { background: linear-gradient(135deg, #5b1d96 0%, #3a0e6b 100%); }
+  .product.spk-fruits .product-banner { background: linear-gradient(135deg, #c43a8a 0%, #7a1f54 100%); }
+  .product.chips-ahoy .product-banner { background: linear-gradient(135deg, #d62929 0%, #8a1414 100%); }
+  .product.smores .product-banner { background: linear-gradient(135deg, #8b5a2b 0%, #4d2e10 100%); }
+
+  .product-banner-text { position: relative; z-index: 2; }
+  .product-id {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.01em;
+    opacity: 0.7; margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .product-name {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .product-illustration {
+    position: relative; z-index: 2;
+    width: 140px; height: 140px;
+    flex-shrink: 0;
+    opacity: 0.92;
+  }
+  .product-illustration svg { width: 100%; height: 100%; }
+
+  .product-body {
+    padding: 36px 44px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 44px;
+  }
+  @media (max-width: 800px) {
+    .product-body { grid-template-columns: 1fr; gap: 28px; padding: 28px; }
+    .product-banner { padding: 28px; }
+  }
+
+  .pblock { margin-bottom: 24px; }
+  .pblock:last-child { margin-bottom: 0; }
+  .pblock-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ash);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .bundle-list { list-style: none; }
+  .bundle-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+  .bundle-list li:last-child { border-bottom: none; }
+  .bundle-list em {
+    display: block; font-size: 0.82rem; color: var(--ash);
+    font-style: normal; margin-top: 3px;
+  }
+  .new-pill {
+    display: inline-block;
+    background: var(--sour);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .caption-block {
+    background: var(--ink);
+    color: var(--sour);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 500;
+    padding: 14px 18px;
+    border-radius: 8px;
+    line-height: 1.5;
+    word-break: break-word;
+    letter-spacing: -0.005em;
+  }
+  .caption-block-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--ash);
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .verbal-quote {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    color: var(--ink);
+    padding: 14px 18px;
+    background: var(--paper-warm);
+    border-radius: 8px;
+    border-left: 2px solid var(--grape);
+  }
+  .verbal-quote-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--ash);
+    margin-top: 8px;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .hooks { display: grid; gap: 10px; }
+  .hook {
+    background: var(--paper-warm);
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 2px solid var(--ink);
+  }
+  .hook-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .hook-desc { font-size: 0.86rem; color: var(--ink-soft); line-height: 1.55; }
+
+  .musthaves {
+    background: rgba(230,57,70,0.04);
+    border: 1px solid rgba(230,57,70,0.2);
+    padding: 18px 22px;
+    border-radius: 10px;
+    margin-top: 22px;
+  }
+  .musthaves-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--candy);
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.005em;
+  }
+  .musthaves ul { list-style: none; }
+  .musthaves li {
+    padding: 7px 0 7px 18px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    position: relative;
+    color: var(--ink);
+  }
+  .musthaves li + li { border-top: 1px solid rgba(230,57,70,0.12); }
+  .musthaves li::before {
+    content: '';
+    position: absolute; left: 0; top: 13px;
+    width: 5px; height: 5px;
+    background: var(--candy); border-radius: 50%;
+  }
+  .musthaves strong { font-weight: 600; }
+
+  .live-stamp {
+    margin-top: 16px;
+    background: var(--ink);
+    color: rgba(250,250,247,0.92);
+    padding: 12px 18px;
+    border-radius: 100px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 32px;
+    text-align: center;
+    margin-top: 80px;
+  }
+  .footer-quote {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    max-width: 680px;
+    margin: 0 auto 20px;
+    color: var(--paper);
+  }
+  .footer-quote .accent { color: var(--sour); }
+  .footer-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    color: rgba(250,250,247,0.6);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .footer-meta strong { color: var(--candy); font-weight: 600; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    .masthead { padding: 12px 18px; flex-wrap: wrap; gap: 6px; font-size: 0.62rem; }
+    .masthead .right { display: none; }
+    .hero { padding: 56px 24px 56px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-art { height: 200px; }
+    .hero-meta { border-left: none; padding-left: 0; text-align: left; border-top: 1px solid rgba(250,250,247,0.15); padding-top: 24px; }
+    .container { padding: 56px 20px 80px; }
+    .intro-block { grid-template-columns: 1fr; gap: 16px; padding-bottom: 48px; }
+    .intro-prose { font-size: 1.15rem; }
+    .checklist { padding: 28px 24px; }
+    .checklist-grid { grid-template-columns: 1fr; gap: 8px; }
+    .checklist-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .nav-strip { padding: 8px; }
+    .nav-label { display: none; }
+    .rule-summary { padding: 18px 20px; }
+    .rule-body { padding: 0 20px 20px 20px; }
+    .doDont { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="left"><span><span class="dot"></span>Issue 01 · Spring 2026</span></div>
+  <div class="center">Snackworks · Mondelēz International</div>
+  <div class="right"><span>For our creators</span></div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">The Creator Playbook</div>
+      <h1>How to make content we can <span class="accent">actually</span> publish.</h1>
+      <p class="hero-sub">Universal rules and product-specific direction for every Snackworks campaign. Read it once, save the re-shoots forever.</p>
+    </div>
+    <div class="hero-art" id="heroArt">
+      <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- SPK candy gradient (3D shading) -->
+          <radialGradient id="spkGrad" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#ffe87a"/>
+            <stop offset="50%" stop-color="#f5c518"/>
+            <stop offset="100%" stop-color="#c89500"/>
+          </radialGradient>
+          <radialGradient id="spkHighlight" cx="30%" cy="25%" r="20%">
+            <stop offset="0%" stop-color="#fffae0" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#fffae0" stop-opacity="0"/>
+          </radialGradient>
+
+          <!-- OREO gradient (3D shading) -->
+          <radialGradient id="oreoGrad" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#3a2840"/>
+            <stop offset="60%" stop-color="#1a1024"/>
+            <stop offset="100%" stop-color="#000"/>
+          </radialGradient>
+          <radialGradient id="oreoSheen" cx="35%" cy="30%" r="25%">
+            <stop offset="0%" stop-color="#9070a8" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#9070a8" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cremeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fffce8"/>
+            <stop offset="100%" stop-color="#e8dfc0"/>
+          </linearGradient>
+
+          <!-- Chocolate chip cookie gradient -->
+          <radialGradient id="cookieGrad" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#e6b878"/>
+            <stop offset="55%" stop-color="#c19553"/>
+            <stop offset="100%" stop-color="#8a6020"/>
+          </radialGradient>
+          <radialGradient id="cookieHL" cx="30%" cy="25%" r="22%">
+            <stop offset="0%" stop-color="#fff5e0" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#fff5e0" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="chipGrad" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#5a3010"/>
+            <stop offset="100%" stop-color="#2a1006"/>
+          </radialGradient>
+
+          <!-- Soft drop shadow -->
+          <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="0" dy="4" result="offsetblur"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Background sparkles (decorative) -->
+        <g fill="#f5c518">
+          <path class="twinkle" d="M 20 60 L 23 70 L 33 73 L 23 76 L 20 86 L 17 76 L 7 73 L 17 70 Z"/>
+          <path class="twinkle twinkle-3" d="M 340 90 L 342 97 L 349 99 L 342 101 L 340 108 L 338 101 L 331 99 L 338 97 Z"/>
+        </g>
+        <g fill="#e63946">
+          <path class="twinkle twinkle-2" d="M 330 40 L 333 49 L 342 52 L 333 55 L 330 64 L 327 55 L 318 52 L 327 49 Z"/>
+          <path class="twinkle twinkle-4" d="M 30 240 L 32 247 L 39 249 L 32 251 L 30 258 L 28 251 L 21 249 L 28 247 Z"/>
+        </g>
+        <g fill="#6ba84f">
+          <path class="twinkle twinkle-3" d="M 300 250 L 302 257 L 309 259 L 302 261 L 300 268 L 298 261 L 291 259 L 298 257 Z"/>
+        </g>
+
+        <!-- Tiny floating dots -->
+        <g fill="#fafaf7" opacity="0.5">
+          <circle cx="50" cy="160" r="2" class="twinkle"/>
+          <circle cx="320" cy="180" r="2" class="twinkle twinkle-2"/>
+          <circle cx="180" cy="20" r="2" class="twinkle twinkle-4"/>
+          <circle cx="80" cy="290" r="1.5" class="twinkle twinkle-3"/>
+          <circle cx="290" cy="290" r="1.5" class="twinkle"/>
+        </g>
+
+        <!-- Squiggle line -->
+        <path d="M 70 280 Q 85 270 100 280 T 130 280" stroke="#f5c518" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <path d="M 240 30 Q 255 20 270 30 T 300 30" stroke="#e63946" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+        <!-- ============ SPK YELLOW CANDY (top-left) ============ -->
+        <g class="drift-1">
+          <g class="snack" id="snack-spk" filter="url(#softShadow)">
+            <!-- Body -->
+            <ellipse cx="100" cy="100" rx="55" ry="58" fill="url(#spkGrad)"/>
+            <!-- Highlight -->
+            <ellipse cx="80" cy="80" rx="28" ry="22" fill="url(#spkHighlight)"/>
+            <!-- Sour sugar crystals -->
+            <g fill="#fffae0">
+              <circle cx="75" cy="65" r="2"/>
+              <circle cx="105" cy="55" r="1.8"/>
+              <circle cx="125" cy="80" r="2.2"/>
+              <circle cx="65" cy="95" r="1.8"/>
+              <circle cx="135" cy="105" r="2"/>
+              <circle cx="85" cy="115" r="2"/>
+              <circle cx="120" cy="135" r="1.8"/>
+              <circle cx="70" cy="135" r="2"/>
+            </g>
+            <g fill="#fff" opacity="0.7">
+              <circle cx="90" cy="75" r="0.8"/>
+              <circle cx="115" cy="95" r="0.8"/>
+              <circle cx="80" cy="110" r="0.8"/>
+              <circle cx="125" cy="120" r="0.8"/>
+            </g>
+            <!-- Cute face: blush -->
+            <ellipse cx="78" cy="108" rx="6" ry="3.5" fill="#ff8888" opacity="0.5"/>
+            <ellipse cx="122" cy="108" rx="6" ry="3.5" fill="#ff8888" opacity="0.5"/>
+            <!-- Eyes (with sparkle) -->
+            <g>
+              <ellipse cx="84" cy="95" rx="4" ry="5" fill="#1a1a1a"/>
+              <circle cx="85.5" cy="93" r="1.5" fill="#fff"/>
+              <ellipse cx="116" cy="95" rx="4" ry="5" fill="#1a1a1a"/>
+              <circle cx="117.5" cy="93" r="1.5" fill="#fff"/>
+            </g>
+            <!-- Smile -->
+            <path d="M 88 118 Q 100 128 112 118" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Tongue tip peeking -->
+            <path d="M 96 122 Q 100 126 104 122 Q 102 124 100 124 Q 98 124 96 122 Z" fill="#ff8888"/>
+          </g>
+        </g>
+
+        <!-- ============ OREO COOKIE (top-right) ============ -->
+        <g class="drift-2">
+          <g class="snack" id="snack-oreo" filter="url(#softShadow)">
+            <!-- Outer cookie -->
+            <circle cx="260" cy="110" r="50" fill="url(#oreoGrad)"/>
+            <!-- Top sheen -->
+            <ellipse cx="248" cy="92" rx="22" ry="14" fill="url(#oreoSheen)"/>
+            <!-- Decorative dots ring -->
+            <g fill="#0a0510" opacity="0.6">
+              <circle cx="260" cy="80" r="2"/>
+              <circle cx="280" cy="92" r="2"/>
+              <circle cx="240" cy="92" r="2"/>
+              <circle cx="288" cy="115" r="2"/>
+              <circle cx="232" cy="115" r="2"/>
+              <circle cx="280" cy="135" r="2"/>
+              <circle cx="240" cy="135" r="2"/>
+              <circle cx="260" cy="142" r="2"/>
+            </g>
+            <!-- Cream filling stripe (visible from side) -->
+            <ellipse cx="260" cy="110" rx="46" ry="5" fill="url(#cremeGrad)"/>
+            <!-- Cream texture -->
+            <g fill="#1a1a1a" opacity="0.15">
+              <rect x="220" y="108" width="2" height="4" rx="1"/>
+              <rect x="234" y="109" width="2" height="3" rx="1"/>
+              <rect x="252" y="108" width="2" height="4" rx="1"/>
+              <rect x="270" y="109" width="2" height="3" rx="1"/>
+              <rect x="284" y="108" width="2" height="4" rx="1"/>
+            </g>
+            <!-- Cute face on cookie -->
+            <g>
+              <circle cx="250" cy="100" r="2.5" fill="#fafaf7"/>
+              <circle cx="250.5" cy="99" r="1" fill="#1a1a1a"/>
+              <circle cx="270" cy="100" r="2.5" fill="#fafaf7"/>
+              <circle cx="270.5" cy="99" r="1" fill="#1a1a1a"/>
+            </g>
+            <path d="M 254 128 Q 260 134 266 128" stroke="#fafaf7" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </g>
+        </g>
+
+        <!-- ============ CHOCOLATE CHIP COOKIE (bottom-center) ============ -->
+        <g class="drift-3">
+          <g class="snack" id="snack-cookie" filter="url(#softShadow)">
+            <!-- Cookie body -->
+            <circle cx="180" cy="220" r="58" fill="url(#cookieGrad)"/>
+            <!-- Highlight -->
+            <ellipse cx="160" cy="200" rx="28" ry="22" fill="url(#cookieHL)"/>
+            <!-- Texture dots (cookie surface) -->
+            <g fill="#a47840" opacity="0.5">
+              <circle cx="200" cy="195" r="1.2"/>
+              <circle cx="155" cy="215" r="1"/>
+              <circle cx="215" cy="240" r="1.2"/>
+              <circle cx="170" cy="255" r="1"/>
+            </g>
+            <!-- Chocolate chips (with depth) -->
+            <g filter="url(#softShadow)">
+              <circle cx="160" cy="195" r="7" fill="url(#chipGrad)"/>
+              <circle cx="158" cy="193" r="2" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="200" cy="190" r="6" fill="url(#chipGrad)"/>
+              <circle cx="198" cy="188" r="1.8" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="220" cy="215" r="7" fill="url(#chipGrad)"/>
+              <circle cx="218" cy="213" r="2" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="180" cy="220" r="6" fill="url(#chipGrad)"/>
+              <circle cx="178" cy="218" r="1.8" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="145" cy="240" r="7" fill="url(#chipGrad)"/>
+              <circle cx="143" cy="238" r="2" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="195" cy="250" r="6" fill="url(#chipGrad)"/>
+              <circle cx="193" cy="248" r="1.8" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <g filter="url(#softShadow)">
+              <circle cx="225" cy="245" r="5" fill="url(#chipGrad)"/>
+              <circle cx="223.5" cy="243.5" r="1.5" fill="#7a4520" opacity="0.6"/>
+            </g>
+            <!-- Cute face on cookie -->
+            <g>
+              <ellipse cx="170" cy="235" rx="6" ry="3" fill="#d68866" opacity="0.5"/>
+              <ellipse cx="190" cy="235" rx="6" ry="3" fill="#d68866" opacity="0.5"/>
+            </g>
+            <ellipse cx="172" cy="225" rx="2" ry="2.5" fill="#1a1a1a"/>
+            <circle cx="173" cy="223.5" r="0.8" fill="#fff"/>
+            <ellipse cx="188" cy="225" rx="2" ry="2.5" fill="#1a1a1a"/>
+            <circle cx="189" cy="223.5" r="0.8" fill="#fff"/>
+            <!-- Smile -->
+            <path d="M 174 240 Q 180 245 186 240" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </g>
+        </g>
+
+        <!-- Floating crumbs around cookie -->
+        <g fill="#a47840">
+          <circle cx="105" cy="270" r="2" class="twinkle"/>
+          <circle cx="115" cy="285" r="1.5" class="twinkle twinkle-2"/>
+          <circle cx="240" cy="280" r="2" class="twinkle twinkle-3"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-label">What's inside</div>
+      <div class="hero-meta-num">18</div>
+      <div class="hero-meta-desc">universal rules, plus 4 product cards.</div>
+    </div>
+  </div>
+</header>
+
+<!-- ALERT BAR -->
+<div class="alert-bar">
+  <strong>NO LIVES</strong> with Snackworks products — going LIVE puts you at immediate risk of removal from the program.
+</div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro-block">
+    <div class="intro-label">A note from the team</div>
+    <div class="intro-prose">
+      <p>We're seeing the same content issues come up over and over — and they're causing videos to get rejected and creators removed from upcoming campaign invites.</p>
+      <p>This guide has two parts: <strong>universal rules</strong> for every Snackworks video, and <strong>product-specific direction</strong> for each of the four current SKUs. Read your assigned product's section before you film, run the checklist before you submit, and you're set.</p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-strip">
+    <span class="nav-label">Jump to</span>
+    <a href="#checklist" class="nav-pill">Checklist</a>
+    <a href="#universal" class="nav-pill">Universal Rules</a>
+    <a href="#spk-og" class="nav-pill">SPK Original</a>
+    <a href="#spk-fruits" class="nav-pill">SPK Fruits</a>
+    <a href="#chips-ahoy" class="nav-pill">Chips Ahoy!</a>
+    <a href="#smores" class="nav-pill">S'mores</a>
+  </nav>
+
+  <!-- CHECKLIST -->
+  <section class="checklist" id="checklist">
+    <div class="checklist-head">
+      <div class="checklist-title">Before you hit submit</div>
+      <div class="checklist-meta">10 quick checks · 30 seconds</div>
+    </div>
+    <div class="checklist-grid">
+      <div class="checklist-item"><span class="checklist-num">01</span><span><strong>#ad text overlay</strong> visible the FULL duration of the video</span></div>
+      <div class="checklist-item"><span class="checklist-num">02</span><span><strong>Verbal disclosure</strong> in the first 10 seconds</span></div>
+      <div class="checklist-item"><span class="checklist-num">03</span><span><strong>Required hashtags + handles</strong> at the start of caption</span></div>
+      <div class="checklist-item"><span class="checklist-num">04</span><span>Music is from the <strong>Commercial Music Library</strong></span></div>
+      <div class="checklist-item"><span class="checklist-num">05</span><span><strong>No eating directly</strong> from the package — always cut between</span></div>
+      <div class="checklist-item"><span class="checklist-num">06</span><span><strong>One serving max</strong> on screen (check the nutrition label)</span></div>
+      <div class="checklist-item"><span class="checklist-num">07</span><span>No "<strong>perfect</strong>", "<strong>ideal</strong>", "<strong>ultimate</strong>" superlatives</span></div>
+      <div class="checklist-item"><span class="checklist-num">08</span><span>No "<strong>craving</strong>", "<strong>addicting</strong>", overindulgence language</span></div>
+      <div class="checklist-item"><span class="checklist-num">09</span><span>No third-party logos, art, alcohol, kids&lt;13, tattoos</span></div>
+      <div class="checklist-item"><span class="checklist-num">10</span><span>No false pricing or urgency claims</span></div>
+    </div>
+  </section>
+
+  <!-- UNIVERSAL RULES -->
+  <div class="section-head" id="universal">
+    <div class="section-num">Part one</div>
+    <h2 class="section-title">Universal rules</h2>
+    <p class="section-desc">These apply to every Snackworks video, regardless of which product you're creating for. Tap any rule to expand.</p>
+  </div>
+
+  <div class="rules-grid">
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">01</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">#ad overlay — full duration, prominent</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>The single most common reason content gets flagged. <strong>#ad</strong> must appear on screen in a prominent location for the <strong>entire</strong> duration — not just at the start.</p>
+        <div class="doDont">
+          <div class="yes">"#ad" embedded as a text overlay, full duration, easy to spot. Bottom corner is fine.</div>
+          <div class="no">"#add" (typo), "Ad", or hidden under your watermark. Don't only flash it briefly.</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">02</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">Verbal partnership disclosure in the first 10 seconds</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>You must <strong>say out loud</strong> that you've partnered with the brand within the first 10 seconds. Captions alone don't count.</p>
+        <div class="doDont">
+          <div class="yes">"I partnered with OREO…" / "SOUR PATCH KIDS sent me…" / "In collaboration with CHIPS AHOY!"</div>
+          <div class="no">Skip the verbal callout. Note: brand is OREO singular — never "OREOs".</div>
+        </div>
+        <div class="rule-note">For ASMR or no-voiceover videos, the disclosure must appear in the caption AND a clear text overlay.</div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">03</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">Required hashtags and handles at the start of caption</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Specific hashtags and handles must appear at the <strong>beginning</strong> of your caption — and they're different per product. <code>@snackworksofficial</code> and <code>#ad</code> are required for all four. See product cards below for exact tags.</p>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">04</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">Commercial Music Library only</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Sound MUST be sourced from TikTok's Commercial Music Library (Pre-cleared Music for Organic Content). Trending songs, music lyrics, third-party audio, photos, artwork, slogans, fonts, or any copyrighted work without proper license = video rejected.</p>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">05</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">Never consume product directly from the packaging</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>You can show reaching into the bag, you can show eating — but <strong>not in the same continuous shot</strong>. Always cut between them.</p>
+        <div class="doDont">
+          <div class="yes">Reach into bag → CUT → eating shot. The edit shows portion control.</div>
+          <div class="no">Pull product straight from the bag to your mouth on camera. Don't drink/pour from a bowl either.</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">06</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">One serving max — check the nutrition label</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Showing or consuming more than one serving = automatic flag. Big piles imply overconsumption — even if you don't eat them all.</p>
+        <div class="rule-note">Quick reference: SPK Chews bundle = 7–9 pieces per serving. CHIPS AHOY! = 2 cookies. When in doubt, look at the label.</div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">07</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">No overindulgence or "craving" / "addicting" language</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Anything promoting overindulgence, mukbang content, or addictive framing is a hard no.</p>
+        <div class="doDont">
+          <div class="yes">"So good" / "Really enjoyed these" / "A great snack"</div>
+          <div class="no">"I could eat the whole pack" / "Craving" / "Addicting" / "Get your fix" / Mukbang</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">08</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">No superlatives — "perfect", "ideal", "ultimate"</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>The brand prohibits absolute or superlative adjectives describing the product itself. Using them for an occasion is fine.</p>
+        <div class="doDont">
+          <div class="yes">"Perfect for movie night" / "Perfect for a watch party" (occasion-based)</div>
+          <div class="no">"Perfect amount of creme" / "Perfect amount of sour" / "Ideal flavor" / "Ultimate cookie"</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">09</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">No unapproved health claims</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>The brand does not position products as healthy, vegan, clean, low-calorie, or as alternatives that help with health conditions.</p>
+        <div class="doDont">
+          <div class="yes">Talk about taste, fun, occasions, sharing, flavor.</div>
+          <div class="no">"Healthy" / "Vegan" / "Clean" / "Guilt-free" / Reference any health condition</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule crit">
+      <summary class="rule-summary">
+        <div class="rule-num">10</div>
+        <div class="rule-text">
+          <span class="rule-tag">Must do</span>
+          <div class="rule-title">No false pricing or urgency claims</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <div class="doDont">
+          <div class="yes">Mention current discount only if confirmed active. Use neutral language.</div>
+          <div class="no">"Last day of the deal" / "Won't find a cheaper price in store" / "Only until midnight"</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">11</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No third-party logos, products, or copyrights</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <div class="doDont">
+          <div class="yes">Plain backgrounds. Generic clothing. Cover tattoos if no IP rights.</div>
+          <div class="no">Competitor mentions, branded apparel (Nike, Gymshark, sports teams), branded electronics, alcohol, drugs, violence.</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">12</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No art in the background</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Paintings, prints, posters, magnets, murals — all copyright concerns unless you own the rights. Plain walls or blurred backgrounds only.</p>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">13</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No identifiable people without a written release</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Anyone identifiable on camera — friends, family, partners, kids, bystanders — needs a written release. Children under 13 cannot consume or interact with the product.</p>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">14</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No movies, events, celebrities, or cultural moments</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Don't reference movies, event titles, celebrity names, taglines, or social/cultural moments. <strong>This includes the World Cup</strong> — explicit rule for the Chips Ahoy! bundle.</p>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">15</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No unsafe handling or unhygienic food practices</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <div class="doDont">
+          <div class="yes">Open with hands or rounded scissors. Use food-safe surfaces.</div>
+          <div class="no">Open fire (incl. candles). Microwave packages. Bench scrapers. Catch-in-mouth tricks.</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">16</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No pets, kids&lt;13, or animals near product</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Don't show pets or animals eating, or in a position to eat, Mondelēz products. Don't show children under 13 consuming or interacting with product. Off-camera reactions count.</p>
+      </div>
+    </details>
+
+    <details class="rule med">
+      <summary class="rule-summary">
+        <div class="rule-num">17</div>
+        <div class="rule-text">
+          <span class="rule-tag">Heads up</span>
+          <div class="rule-title">No religion, politics, or sensitive topics</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>No references to religion, politics, racism, gender, or sexual inequality. No negative or disparaging statements about any company or product. No foul language, no overt sexual content.</p>
+      </div>
+    </details>
+
+    <details class="rule low">
+      <summary class="rule-summary">
+        <div class="rule-num">18</div>
+        <div class="rule-text">
+          <span class="rule-tag">Good to know</span>
+          <div class="rule-title">No third-party recipes or ingredient amounts</div>
+        </div>
+        <div class="rule-toggle">+</div>
+      </summary>
+      <div class="rule-body">
+        <p>Don't use someone else's recipe or imagery as your own. Don't include ingredient amounts or serving suggestions in recipe content.</p>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- PRODUCT SECTION -->
+  <div class="section-head">
+    <div class="section-num">Part two</div>
+    <h2 class="section-title">The products</h2>
+    <p class="section-desc">Each SKU has its own bundle, hooks, hashtags, and brand-specific gotchas. Read the section for the product you're creating for.</p>
+  </div>
+
+  <!-- SPK ORIGINAL -->
+  <article class="product spk-og" id="spk-og">
+    <div class="product-banner">
+      <div class="product-banner-text">
+        <div class="product-id">Product 01 · Sour Patch Kids</div>
+        <h3 class="product-name">SOUR PATCH KIDS Original</h3>
+      </div>
+    </div>
+    <div class="product-body">
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">What&rsquo;s in the bundle</div>
+          <ul class="bundle-list">
+            <li>SOUR PATCH KIDS Original Soft & Chewy Candy<em>The classic — sour, then sweet.</em></li>
+          </ul>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Your caption starter pack</div>
+          <div class="caption-block-meta">Copy and paste this in your caption</div>
+          <div class="caption-block">#ad @therealsourpatchkids @snackworksofficial</div>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Say this on camera</div>
+          <div class="verbal-quote">"I partnered with the SOUR PATCH KIDS brand…"</div>
+          <div class="verbal-quote-meta">Within the first 10 seconds</div>
+        </div>
+      </div>
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">Content ideas to play with</div>
+          <div class="hooks">
+            <div class="hook">
+              <div class="hook-title">Macro shot opener</div>
+              <div class="hook-desc">Open with a close-up of the candy. Capture the colors and unique shapes — visual variety alone earns a rewatch.</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Crowning my favorite flavor"</div>
+              <div class="hook-desc">Show candies lined up, emphasize differences, crown a winner. Bring in a guest (with consent) — works especially well with parents (generational contrast) or first-timers.</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Make a candy salad with me"</div>
+              <div class="hook-desc">Pour the contents into a container and mix. Emphasize variety and the sweet-sour balance. Suggest sharing occasions. <strong>Avoid eating candy on camera.</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="musthaves">
+          <div class="musthaves-title">A few brand things to remember</div>
+          <ul>
+            <li>The chews have <strong>SOUR on the inside</strong>, NOT "sugar". Saying "sugar in the middle" is wrong.</li>
+            <li>The red flavor is <strong>Redberry</strong>, NOT "strawberry".</li>
+          </ul>
+        </div>
+        <div class="live-stamp">No LIVES — please!</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SPK FRUITS -->
+  <article class="product spk-fruits" id="spk-fruits">
+    <div class="product-banner">
+      <div class="product-banner-text">
+        <div class="product-id">Product 02 · Sour Patch Kids</div>
+        <h3 class="product-name">SOUR PATCH KIDS Fruits Variety Pack</h3>
+      </div>
+    </div>
+    <div class="product-body">
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">What&rsquo;s in the bundle</div>
+          <ul class="bundle-list">
+            <li>SOUR PATCH KIDS Fruits Mix Soft & Chewy Candy</li>
+            <li>SOUR PATCH KIDS Cherry Soft & Chewy Candy</li>
+            <li>SOUR PATCH KIDS Watermelon Soft & Chewy Candy</li>
+            <li>SOUR PATCH KIDS Fruits Tropical Mix Soft & Chewy Candy<span class="new-pill">NEW</span></li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.85rem; color: var(--ash);">Leans more sweet than sour. The Fruits Tropical Mix is new — highlight it.</p>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Your caption starter pack</div>
+          <div class="caption-block-meta">Copy and paste this in your caption</div>
+          <div class="caption-block">#ad @therealsourpatchkids @snackworksofficial</div>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Say this on camera</div>
+          <div class="verbal-quote">"I partnered with the SOUR PATCH KIDS brand…"</div>
+          <div class="verbal-quote-meta">Within the first 10 seconds</div>
+        </div>
+      </div>
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">Content ideas to play with</div>
+          <div class="hooks">
+            <div class="hook">
+              <div class="hook-title">Macro shot opener — show all 9 flavors</div>
+              <div class="hook-desc">Capture close-ups of the nine unique flavors: Peach, Grape, Watermelon, Strawberry, Cherry, Passion Fruit, Pineapple, Tropical Twist, Paradise Punch.</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Make a candy salad with me featuring the new flavors"</div>
+              <div class="hook-desc">Pour each bag into a container, mix. Emphasize variety + the sweet side of sour. Sharing occasions. <strong>Avoid eating candy on camera.</strong></div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Crowning my favorite SOUR PATCH KIDS flavor"</div>
+              <div class="hook-desc">Show candies lined up. Emphasize differences. Bring in a guest (with consent) — parents or first-timers work especially well.</div>
+            </div>
+          </div>
+        </div>
+        <div class="musthaves">
+          <div class="musthaves-title">A few brand things to remember</div>
+          <ul>
+            <li><strong>Highlight the NEW Fruits Tropical Mix</strong> — it's the star of this bundle.</li>
+            <li>This pack leans <strong>more sweet than sour</strong> — frame accurately, not as "extra sour".</li>
+            <li>Correct flavor names: <strong>Peach</strong> (not mango/orange), Tropical Twist, Paradise Punch.</li>
+          </ul>
+        </div>
+        <div class="live-stamp">No LIVES — please!</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- CHIPS AHOY -->
+  <article class="product chips-ahoy" id="chips-ahoy">
+    <div class="product-banner">
+      <div class="product-banner-text">
+        <div class="product-id">Product 03 · Chips Ahoy!</div>
+        <h3 class="product-name">Chips Ahoy! Soccer Bundle</h3>
+      </div>
+    </div>
+    <div class="product-body">
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">What&rsquo;s in the bundle</div>
+          <ul class="bundle-list">
+            <li>CHIPS AHOY! Original Chocolate Chip Cookies<em>Crunchy chocolate chip cookies</em></li>
+            <li>CHIPS AHOY! Crunchy Red, White & Blue Candy Blasts<span class="new-pill">NEW</span><em>Crunchy chocolate chip cookies with red, white & blue candy pieces</em></li>
+            <li>CHIPS AHOY! Chewy Chocolatey Churro Cookies<span class="new-pill">NEW</span><em>Chewy churro-flavored cookies with chocolatey chips and a chocolatey filling</em></li>
+            <li>CHIPS AHOY! Chewy Dulce de Leche Cookies<span class="new-pill">NEW</span><em>Chewy dulce de leche-flavored cookies with white fudge and butterscotch chips</em></li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.85rem; color: var(--ash);">3 new flavors are the stars — make sure to highlight them.</p>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Your caption starter pack</div>
+          <div class="caption-block-meta">Copy and paste this in your caption</div>
+          <div class="caption-block">#ad @theofficialchipsahoy @snackworksofficial</div>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Say this on camera</div>
+          <div class="verbal-quote">"I partnered with the CHIPS AHOY! brand…"</div>
+          <div class="verbal-quote-meta">Within the first 10 seconds</div>
+        </div>
+      </div>
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">Content ideas to play with</div>
+          <div class="hooks">
+            <div class="hook">
+              <div class="hook-title">"What I'm snacking on during the game this weekend"</div>
+              <div class="hook-desc">Set the scene — you're prepping for a watch party. Show all four packs laid out. Highlight that the 3 new flavors aren't in stores until May, but viewers can grab them now on TikTok Shop.</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">Dramatic first-bite close-up</div>
+              <div class="hook-desc">Lead with Chocolatey Churro or Dulce de Leche — an unexpected twist on the classic. Walk through texture, filling, flavor payoff.</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Crowning my favorite flavor"</div>
+              <div class="hook-desc">Macro shots of each cookie, describe the flavor, crown a winner. CTA: not in stores until May, link below.</div>
+            </div>
+          </div>
+        </div>
+        <div class="musthaves">
+          <div class="musthaves-title">A few brand things to remember</div>
+          <ul>
+            <li><strong>DO NOT say "World Cup"</strong> or allude to anything in the World Cup. Hard rule for this bundle. "Game day", "watch party", "soccer night" are all fine.</li>
+            <li>The Churro filling is <strong>"chocolatey filling"</strong>, NEVER "chocolate filling" (FDA standard of identity). Same for <strong>"white fudge"</strong>, NOT "white chocolate".</li>
+            <li>Flavor name is <strong>"Chocolatey Churro"</strong>, NOT "Chocolate Churro".</li>
+            <li>3 new flavors are <strong>not in stores until May</strong> — that framing is OK. Don't say "you can't get these in stores at all".</li>
+            <li>The bundle being TikTok-only is OK. The flavors being TikTok-exclusive is NOT.</li>
+          </ul>
+        </div>
+        <div class="live-stamp">No LIVES — please!</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- S'MORES -->
+  <article class="product smores" id="smores">
+    <div class="product-banner">
+      <div class="product-banner-text">
+        <div class="product-id">Product 04 · OREO × Honey Maid</div>
+        <h3 class="product-name">OREO & HONEY MAID S'mores Bundle</h3>
+      </div>
+    </div>
+    <div class="product-body">
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">What&rsquo;s in the bundle</div>
+          <ul class="bundle-list">
+            <li>OREO S'mOREO Sandwich Cookies</li>
+            <li>OREO Chocolate Sandwich Cookies, Family Size</li>
+            <li>HONEY MAID Salted Caramel Graham Crackers<span class="new-pill">NEW</span></li>
+            <li>HONEY MAID Handi-Snacks Graham Cracker Sticks 'N S'mores-Flavored Dip<span class="new-pill">NEW</span></li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.85rem; color: var(--ash);">Limited Edition variety pack. The 2 new items are hero — feature them first.</p>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Your caption starter pack</div>
+          <div class="caption-block-meta">Copy and paste this in your caption</div>
+          <div class="caption-block">#ad @oreo @honeymaidsnacks @snackworksofficial</div>
+        </div>
+        <div class="pblock">
+          <div class="pblock-label">Say this on camera</div>
+          <div class="verbal-quote">"I partnered with SnackWorks…"</div>
+          <div class="verbal-quote-meta">Covers OREO + HONEY MAID, within the first 10 seconds</div>
+        </div>
+      </div>
+      <div>
+        <div class="pblock">
+          <div class="pblock-label">Content ideas to play with</div>
+          <div class="hooks">
+            <div class="hook">
+              <div class="hook-title">"Salted caramel flavored graham crackers??"</div>
+              <div class="hook-desc">Lead with curiosity — a question hook stops the scroll. Feature NEW items first, unbox each one on camera, show genuine reactions. End with a clear CTA: "Link's in the shop — grab it before it sells out."</div>
+            </div>
+            <div class="hook">
+              <div class="hook-title">"Wait — OREO and HONEY MAID just launched a s'mores variety pack and nobody told me??"</div>
+              <div class="hook-desc">Express urgency — only available for a limited time. Walk through each item, highlight the variety. Sensory appeal sells: close-ups of textures, breaking a cookie in half, dipping a Handi-Snack. Always end with a direct CTA.</div>
+            </div>
+          </div>
+        </div>
+        <div class="musthaves">
+          <div class="musthaves-title">A few brand things to remember</div>
+          <ul>
+            <li>The brand is <strong>OREO</strong> (singular), NOT "OREOs". Say "I partnered with OREO," not "OREOs."</li>
+            <li>OREO filling is <strong>"creme"</strong> — never call it "chocolate" anything.</li>
+            <li>For any cookie/cracker filling: <strong>"chocolatey"</strong> NOT "chocolate" (FDA standard of identity).</li>
+            <li><strong>NO open fire — including candles.</strong> This is a brand rule. Stick to "no-fire" s'mores assemblies.</li>
+            <li>Don't include ingredient amounts or serving suggestions in any recipe-style content.</li>
+          </ul>
+        </div>
+        <div class="live-stamp">No LIVES — please!</div>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p class="footer-quote">When in doubt, <span class="accent">ask before you film.</span> It's faster than re-shooting.</p>
+  <p class="footer-meta">Reach out to your <strong>Pattern</strong> contact</p>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const first = document.querySelector('.rule');
+    if (first) first.open = true;
+    document.querySelectorAll('.nav-pill').forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(pill.getAttribute('href'));
+        if (target) {
+          const offset = target.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Interactive snacks — click to bounce + spawn particles
+    const heroArt = document.getElementById('heroArt');
+    if (heroArt) {
+      const svg = heroArt.querySelector('svg');
+      const snacks = heroArt.querySelectorAll('.snack');
+      const colors = ['#f5c518', '#e63946', '#6ba84f', '#5b1d96', '#ffa17a'];
+
+      snacks.forEach(snack => {
+        snack.addEventListener('click', (e) => {
+          e.stopPropagation();
+          // Bounce
+          snack.classList.remove('popping');
+          void snack.offsetWidth;
+          snack.classList.add('popping');
+
+          // Spawn particles at snack center
+          const bbox = snack.getBBox();
+          const cx = bbox.x + bbox.width / 2;
+          const cy = bbox.y + bbox.height / 2;
+
+          for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.3;
+            const distance = 50 + Math.random() * 30;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            const size = 3 + Math.random() * 3;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            particle.setAttribute('cx', cx);
+            particle.setAttribute('cy', cy);
+            particle.setAttribute('r', size);
+            particle.setAttribute('fill', color);
+            svg.appendChild(particle);
+
+            // Animate using SMIL via JS-controlled CSS
+            particle.animate([
+              { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+              { transform: `translate(${dx}px, ${dy}px) scale(0)`, opacity: 0 }
+            ], {
+              duration: 700 + Math.random() * 200,
+              easing: 'cubic-bezier(0.4, 0, 0.6, 1)',
+              fill: 'forwards'
+            }).onfinish = () => particle.remove();
+          }
+        });
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
